@@ -1,0 +1,91 @@
+{
+  "containerDefinitions": [
+    {
+      "cpu": 0,
+      "essential": true,
+      "image": "public.ecr.aws/v9g2r9e2/wwwtskt/nginx:latest",
+      "logConfiguration": {
+        "logDriver": "awsfirelens",
+        "options": {}
+      },
+      "name": "laravel-sli-nginx",
+      "portMappings": [
+        {
+          "appProtocol": "http",
+          "containerPort": 80,
+          "hostPort": 80,
+          "name": "laravel-sli-80-tcp",
+          "protocol": "tcp"
+        }
+      ],
+      "versionConsistency": ""
+    },
+    {
+      "cpu": 0,
+      "essential": false,
+      "image": "public.ecr.aws/v9g2r9e2/wwwtskt/laravel:latest",
+      "logConfiguration": {
+        "logDriver": "awsfirelens",
+        "options": {}
+      },
+      "name": "laravel-sli-app",
+      "portMappings": [
+        {
+          "appProtocol": "",
+          "containerPort": 9000,
+          "hostPort": 9000,
+          "name": "9000",
+          "protocol": "tcp"
+        }
+      ],
+      "versionConsistency": ""
+    },
+    {
+      "cpu": 0,
+      "essential": true,
+      "firelensConfiguration": {
+        "type": "fluentbit"
+      },
+      "image": "public.ecr.aws/v9g2r9e2/wwwtskt/fluent-bit:latest",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/ecs-aws-firelens-sidecar-container",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "firelens",
+          "max-buffer-size": "25m",
+          "mode": "non-blocking"
+        }
+      },
+      "memoryReservation": 51,
+      "name": "laravel-sli-fluent-bit",
+      "portMappings": [
+        {
+          "appProtocol": "",
+          "containerPort": 24225,
+          "hostPort": 24225,
+          "name": "24225",
+          "protocol": "tcp"
+        }
+      ],
+      "user": "0",
+      "versionConsistency": ""
+    }
+  ],
+  "cpu": "1024",
+  "executionRoleArn": "{{ tfstate `module.iam.aws_iam_role.ecs_task_execution_role.arn` }}",
+  "family": "laravel-sli",
+  "ipcMode": "",
+  "memory": "3072",
+  "networkMode": "awsvpc",
+  "pidMode": "",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "taskRoleArn": "{{ tfstate `module.iam.aws_iam_role.ecs_task_role.arn` }}"
+}

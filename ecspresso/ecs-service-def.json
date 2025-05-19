@@ -1,0 +1,44 @@
+{
+  "availabilityZoneRebalancing": "ENABLED",
+    "deploymentConfiguration": {
+        "alarms": {
+            "enable": false,
+            "rollback": false,
+            "AlarmNames": []
+        },
+    "maximumPercent": 200,
+    "minimumHealthyPercent": 100
+  },
+  "deploymentController": {
+    "type": "CODE_DEPLOY"
+  },
+  "desiredCount": 1,
+  "enableECSManagedTags": true,
+  "enableExecuteCommand": false,
+  "healthCheckGracePeriodSeconds": 0,
+  "launchType": "FARGATE",
+  "loadBalancers": [
+    {
+      "containerName": "laravel-sli-nginx",
+      "containerPort": 80,
+      "targetGroupArn": "{{ tfstate `module.load_balancer.aws_lb_target_group.bg1.arn` }}"
+    }
+  ],
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "assignPublicIp": "ENABLED",
+      "securityGroups": [
+          "{{ tfstate `module.security_group.aws_security_group.ec2.id`}}"
+      ],
+      "subnets": [
+          "{{ tfstate `module.subnet.aws_subnet.public_subnet['192.168.10.0/24'].id` }}",
+          "{{ tfstate `module.subnet.aws_subnet.public_subnet['192.168.11.0/24'].id` }}",
+          "{{ tfstate `module.subnet.aws_subnet.public_subnet['192.168.12.0/24'].id` }}"
+      ]
+    }
+  },
+  "platformFamily": "Linux",
+  "platformVersion": "LATEST",
+  "propagateTags": "NONE",
+  "schedulingStrategy": "REPLICA"
+}
