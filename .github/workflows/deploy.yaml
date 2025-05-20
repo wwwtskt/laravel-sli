@@ -31,8 +31,11 @@ jobs:
         with:
           context: .
           file: docker/php/ecs/dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: public.ecr.aws/v9g2r9e2/wwwtskt/laravel:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       # s3にappspecをプッシュする
       # code deployを実行する
