@@ -77,4 +77,5 @@ jobs:
           envsubst < appspec_template.yml > appspec.yml
           aws s3 cp appspec.yml s3://laravel-sli-codedeploy/appspec.yml
 
-      # code deployを実行する
+      - name: Execute bg-deploy
+        run: aws deploy create-deployment --cli-input-json file://create-deployment.json --region ap-northeast-1

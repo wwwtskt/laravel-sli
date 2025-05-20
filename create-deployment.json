@@ -1,0 +1,12 @@
+{
+  "applicationName": "laravel-sli",
+  "deploymentGroupName": "laravel-sli",
+  "revision": {
+    "revisionType": "S3",
+    "s3Location": {
+      "bucket": "laravel-sli-codedeploy",
+      "key": "appspec.yml",
+      "bundleType": "YAML"
+    }
+  }
+}
