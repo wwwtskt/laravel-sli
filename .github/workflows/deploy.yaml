@@ -16,7 +16,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ap-northeast-1
+          aws-region: us-east-1
           role-to-assume: arn:aws:iam::031215319865:role/githubRole
 
       - uses: docker/setup-qemu-action@v3
