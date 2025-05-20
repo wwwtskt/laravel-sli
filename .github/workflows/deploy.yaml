@@ -70,5 +70,11 @@ jobs:
 
           echo "[INFO] TASK_DEF_ARN=$TASK_DEF_ARN"
           echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> "$GITHUB_ENV"
-      # s3にappspecをプッシュする
+
+      - name: Create appspec.yml and push s3
+        run: |
+          export TASK_DEF_ARN="${TASK_DEF_ARN}"
+          envsubst < appspec_template.yml > appspec.yml
+          aws s3 cp appspec.yml s3://laravel-sli-codedeploy/appspec.yml
+
       # code deployを実行する
