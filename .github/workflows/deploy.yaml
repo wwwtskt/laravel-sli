@@ -1,0 +1,39 @@
+name: cicd
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  doker-build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: arn:aws:iam::031215319865:role/githubRole
+
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Build and Push to ECR
+        env:
+          ECR_REPOSITORY: wwwtskt/laravel
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          IMAGE_URI=public.ecr.aws/v9g2r9e2/$ECR_REPOSITORY
+          docker buildx build --platform linux/amd64 linux/arm64 -t $IMAGE_URI:$IMAGE_TAG . --push
+      # s3にappspecをプッシュする
+      # code deployを実行する
