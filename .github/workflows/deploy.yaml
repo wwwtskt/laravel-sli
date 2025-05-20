@@ -53,11 +53,9 @@ jobs:
           aws-region: ap-northeast-1
           role-to-assume: arn:aws:iam::031215319865:role/githubRole
 
-      - name: Install ecspresso
-        run: |
-          curl -sSL https://github.com/kayac/ecspresso/releases/latest/download/ecspresso-linux-amd64.tar.gz \
-          | tar xz
-          sudo mv ecspresso /usr/local/bin/
+      - uses: kayac/ecspresso@v2
+        with:
+          version: latest
 
       - name: Register new task definition revision
         run: |
