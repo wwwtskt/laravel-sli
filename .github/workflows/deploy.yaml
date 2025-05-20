@@ -64,11 +64,11 @@ jobs:
           ACCOUNT_ID=031215319865
           REGION=ap-northeast-1
 
-          OUTPUT=$(ecspresso register --config ecspresso/ecspresso.yml | grep 'Task definition is registered')
-          REVISION=$(echo "$OUTPUT" | grep -o "${FAMILY_NAME}:[0-9]*" | cut -d: -f2)
+          ecspresso register --config ecspresso/ecspresso.yml --output > taskdef.json
 
-          TASK_DEF_ARN="arn:aws:ecs:${REGION}:${ACCOUNT_ID}:task-definition/${FAMILY_NAME}:${REVISION}"
-          echo "TASK_DEF_ARN=$TASK_DEF_ARN"
+          TASK_DEF_ARN=$(jq -r '.taskDefinitionArn' taskdef.json)
+
+          echo "[INFO] TASK_DEF_ARN=$TASK_DEF_ARN"
           echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> "$GITHUB_ENV"
       # s3にappspecをプッシュする
       # code deployを実行する
