@@ -61,11 +61,15 @@ jobs:
         id: register
         run: |
           FAMILY_NAME=laravel-sli
-          REVISION=$(ecspresso register --config ecspresso/ecspresso.yml | grep 'Task definition is registered' | awk '{print $6}')
+          REVISION=$(ecspresso register --config ecspresso/ecspresso.yml \
+            | grep 'Task definition is registered' \
+            | awk -F: '{print $2}')
+          
           TASK_DEF_ARN=$(aws ecs describe-task-definition \
             --task-definition ${FAMILY_NAME}:${REVISION} \
             --query 'taskDefinition.taskDefinitionArn' \
             --output text)
+
           echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> "$GITHUB_ENV"
       # s3にappspecをプッシュする
       # code deployを実行する
