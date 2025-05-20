@@ -27,13 +27,12 @@ jobs:
         with:
           registry-type: public
 
-      - name: Build and Push to ECR
-        env:
-          ECR_REPOSITORY: wwwtskt/laravel
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          IMAGE_URI=public.ecr.aws/v9g2r9e2/$ECR_REPOSITORY
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_URI:$IMAGE_TAG . --push
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/php/ecs/dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: public.ecr.aws/v9g2r9e2/wwwtskt/laravel:${{ github.sha }}
       # s3にappspecをプッシュする
       # code deployを実行する
