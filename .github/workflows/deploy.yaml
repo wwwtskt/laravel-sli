@@ -1,4 +1,4 @@
-name: cicd
+name: bg-deploy
 
 on:
   push:
@@ -7,63 +7,59 @@ on:
 
 env:
   IMG_TAG: ${{ github.sha }}
+  IAM_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{secrets.GH_ROLE}}
+  UBUNTU_VERSION: ubuntu-24.04
 
 jobs:
   docker-build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.UBUNTU_VERSION }}
     permissions:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df #v4.2.1
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::031215319865:role/githubRole
+          role-to-assume: ${{ env.IAM_ROLE }}
 
-      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 #v3.6.0
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 #v3.10.0
 
-      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: aws-actions/amazon-ecr-login@5a88a04c91d5c6f97aae0d9be790e64d9b1d47b7 #1.7.1
         with:
           registry-type: public
 
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@1dc73863535b631f98b2378be8619f83b136f4a0 #v6.17.0
         with:
           context: .
           file: docker/php/ecs/dockerfile
           platforms: linux/amd64
           push: true
-          tags: public.ecr.aws/v9g2r9e2/wwwtskt/laravel:${{ env.IMG_TAG }}
+          tags: public.ecr.aws/${{ secrets.ECR_ID }}/wwwtskt/laravel:${{ env.IMG_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   update-taskdef:
-    runs-on: ubuntu-latest
+    runs-on: ${{ UBUNTU_VERSION }}
     needs: docker-build-and-push
     permissions:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df #v4.2.1
         with:
           aws-region: ap-northeast-1
-          role-to-assume: arn:aws:iam::031215319865:role/githubRole
+          role-to-assume:  ${{ env.IAM_ROLE }}
 
-      - uses: kayac/ecspresso@v2
-        with:
-          version: latest
+      - uses: kayac/ecspresso@2eb7d9279aabec2c871d8bec07bcc458e4c33c0d #v2.5.0
 
       - name: Register new task definition and get ARN
         id: register
         run: |
-          FAMILY_NAME=laravel-sli
-          ACCOUNT_ID=031215319865
-          REGION=ap-northeast-1
-
           ecspresso register --config ecspresso/ecspresso.yml --output > taskdef.json
 
           TASK_DEF_ARN=$(jq -r '.taskDefinitionArn' taskdef.json)
@@ -75,7 +71,7 @@ jobs:
         run: |
           export TASK_DEF_ARN="${TASK_DEF_ARN}"
           envsubst < appspec_template.yml > appspec.yml
-          aws s3 cp appspec.yml s3://laravel-sli-codedeploy/appspec.yml
+          aws s3 cp appspec.yml ${{ secrets.APPSPEC_S3 }}/appspec.yml
 
       - name: Execute bg-deploy
         run: aws deploy create-deployment --cli-input-json file://create-deployment.json --region ap-northeast-1
