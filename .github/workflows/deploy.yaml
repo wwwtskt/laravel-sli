@@ -93,4 +93,4 @@ jobs:
           role-to-assume:  arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{secrets.GH_ROLE}}
 
       - name: Execute bg-deploy
-        run: aws deploy create-deployment --cli-input-json file://create-deployment.json --region ap-northeast-1
+        run: aws deploy create-deployment --cli-input-json file://create-deployment.json --region ap-northeast-1 --debug
