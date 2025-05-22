@@ -8,11 +8,10 @@ on:
 env:
   IMG_TAG: ${{ github.sha }}
   IAM_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{secrets.GH_ROLE}}
-  UBUNTU_VERSION: "ubuntu-24.04"
 
 jobs:
   docker-build-and-push:
-    runs-on: ${{ env.UBUNTU_VERSION }}
+    runs-on: ubuntu-24.04
     permissions:
       id-token: write
       contents: read
@@ -42,7 +41,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
   update-taskdef:
-    runs-on: ${{ UBUNTU_VERSION }}
+    runs-on: ubuntu-24.04
     needs: docker-build-and-push
     permissions:
       id-token: write
