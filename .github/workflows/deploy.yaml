@@ -8,7 +8,7 @@ on:
 env:
   IMG_TAG: ${{ github.sha }}
   IAM_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{secrets.GH_ROLE}}
-  UBUNTU_VERSION: ubuntu-24.04
+  UBUNTU_VERSION: "ubuntu-24.04"
 
 jobs:
   docker-build-and-push:
