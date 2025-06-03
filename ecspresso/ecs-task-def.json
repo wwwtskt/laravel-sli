@@ -16,6 +16,13 @@
           "hostPort": 80,
           "name": "laravel-sli-80-tcp",
           "protocol": "tcp"
+        },
+        {
+          "appProtocol": "http",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "name": "laravel-sli-8080-tcp",
+          "protocol": "tcp"
         }
       ],
       "versionConsistency": ""
