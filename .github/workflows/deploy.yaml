@@ -39,6 +39,7 @@ jobs:
           tags: public.ecr.aws/${{ secrets.ECR_ID }}/wwwtskt/laravel:${{ env.IMG_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
   update-taskdef:
     runs-on: ubuntu-24.04
     needs: docker-build-and-push

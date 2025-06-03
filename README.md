@@ -39,21 +39,21 @@ docker buildx create --name mybuilder --use;
 docker buildx inspect --bootstrap 
 
 docker buildx build \
-  --platform linux/amd64,linux/arm64 \
+  --platform linux/amd64 \
   -f ./docker/php/ecs/dockerfile \
   -t public.ecr.aws/v9g2r9e2/wwwtskt/laravel:latest \
   --push \
   .
 
 docker buildx build \
-  --platform linux/amd64,linux/arm64 \
+  --platform linux/amd64 \
   -f ./docker/nginx/ecs/dockerfile \
   -t public.ecr.aws/v9g2r9e2/wwwtskt/nginx:latest \
   --push \
   .
 
 docker buildx build \
-  --platform linux/amd64,linux/arm64 \
+  --platform linux/amd64 \
   -f ./docker/fluent-bit/ecs/dockerfile \
   -t public.ecr.aws/v9g2r9e2/wwwtskt/fluent-bit:latest \
   --push \
