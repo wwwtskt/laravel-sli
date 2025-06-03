@@ -22,6 +22,11 @@
       "containerName": "laravel-sli-nginx",
       "containerPort": 80,
       "targetGroupArn": "{{ tfstate `module.load_balancer.aws_lb_target_group.bg1.arn` }}"
+    },
+    {
+      "containerName": "laravel-sli-nginx",
+      "containerPort": 8080,
+      "targetGroupArn": "{{ tfstate `module.load_balancer.aws_lb_target_group.test.arn` }}"
     }
   ],
   "networkConfiguration": {
