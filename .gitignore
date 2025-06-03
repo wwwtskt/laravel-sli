@@ -22,7 +22,6 @@ yarn-error.log
 /.vscode
 /.zed
 .terraform/terraform/.terraform/
-/terraform/
 .terraform/
 *.tfstate
 *.tfstate.backup
